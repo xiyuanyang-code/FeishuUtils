@@ -1,0 +1,7 @@
+env:
+  APP_ID: your_app_id
+  APP_SECRET: your_app_secret
+  chat_id: your_chat_id
+
+
+
