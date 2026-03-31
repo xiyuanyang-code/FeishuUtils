@@ -47,3 +47,38 @@ class Config:
     def chat_id(self) -> str:
         """Get Feishu chat ID."""
         return self._config.get("env", {}).get("chat_id", "")
+
+    @property
+    def bookkeeping_app_id(self) -> str:
+        """Get Feishu APP_ID for bookkeeping."""
+        return self._config.get("book_keeping", {}).get("APP_ID", "")
+
+    @property
+    def bookkeeping_app_secret(self) -> str:
+        """Get Feishu APP_SECRET for bookkeeping."""
+        return self._config.get("book_keeping", {}).get("APP_SECRET", "")
+
+    @property
+    def bookkeeping_chat_id(self) -> str:
+        """Get Feishu chat ID for bookkeeping."""
+        return self._config.get("book_keeping", {}).get("chat_id", "")
+
+    @property
+    def gpu_monitor_app_id(self) -> str:
+        """Get Feishu APP_ID for GPU monitor."""
+        return self._config.get("gpu_monitor", {}).get("APP_ID", "")
+
+    @property
+    def gpu_monitor_app_secret(self) -> str:
+        """Get Feishu APP_SECRET for GPU monitor."""
+        return self._config.get("gpu_monitor", {}).get("APP_SECRET", "")
+
+    @property
+    def gpu_monitor_chat_id(self) -> str:
+        """Get Feishu chat ID for GPU monitor."""
+        return self._config.get("gpu_monitor", {}).get("chat_id", "")
+
+    @property
+    def gpu_node_names(self) -> list:
+        """Get GPU node names from config."""
+        return self._config.get("gpu_monitor", {}).get("names", [])

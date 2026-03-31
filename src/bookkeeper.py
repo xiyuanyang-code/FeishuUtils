@@ -81,8 +81,8 @@ class FeishuBookKeeper:
         """
         return (
             lark.Client.builder()
-            .app_id(self.config.app_id)
-            .app_secret(self.config.app_secret)
+            .app_id(self.config.bookkeeping_app_id)
+            .app_secret(self.config.bookkeeping_app_secret)
             .log_level(lark.LogLevel.INFO)
             .build()
         )
@@ -203,7 +203,7 @@ class FeishuBookKeeper:
         request: ListMessageRequest = (
             ListMessageRequest.builder()
             .container_id_type("chat")
-            .container_id(self.config.chat_id)
+            .container_id(self.config.bookkeeping_chat_id)
             .sort_type("ByCreateTimeAsc")
             .page_size(50)
             .build()
@@ -268,7 +268,7 @@ class FeishuBookKeeper:
             request: ListMessageRequest = (
                 ListMessageRequest.builder()
                 .container_id_type("chat")
-                .container_id(self.config.chat_id)
+                .container_id(self.config.bookkeeping_chat_id)
                 .sort_type("ByCreateTimeDesc")
                 .page_size(50)
                 .build()
@@ -457,7 +457,7 @@ class FeishuBookKeeper:
                 .receive_id_type("chat_id")
                 .request_body(
                     CreateMessageRequestBody.builder()
-                    .receive_id(self.config.chat_id)
+                    .receive_id(self.config.bookkeeping_chat_id)
                     .msg_type("text")
                     .content(content)
                     .build()
