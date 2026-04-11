@@ -121,7 +121,11 @@ class GPUMonitor:
         try:
             # Build SSH command with virtual environment activation
             # * you can switch to your own commands
-            remote_command = "cd /data/xiyuanyang/public && source .venv/bin/activate && gpustat --json"
+            remote_command = "gpustat"
+            if "Voc" in hostname:
+                remote_command = "cd /data/xiyuanyang/public && source .venv/bin/activate && gpustat --json"
+            if "Comp" in hostname:
+                remote_command = "cd /volume/basedata/users/yxd/xiyuanyang/public && source .venv/bin/activate && gpustat --json"
 
             cmd = [
                 "ssh",
