@@ -82,3 +82,37 @@ class Config:
     def gpu_node_names(self) -> list:
         """Get GPU node names from config."""
         return self._config.get("gpu_monitor", {}).get("names", [])
+
+    @property
+    def cpu_monitor_app_id(self) -> str:
+        """Get Feishu APP_ID for CPU monitor."""
+        return self._config.get("cpu_monitor", {}).get("APP_ID", "")
+
+    @property
+    def cpu_monitor_app_secret(self) -> str:
+        """Get Feishu APP_SECRET for CPU monitor."""
+        return self._config.get("cpu_monitor", {}).get("APP_SECRET", "")
+
+    @property
+    def cpu_monitor_chat_id(self) -> str:
+        """Get Feishu chat ID for CPU monitor."""
+        return self._config.get("cpu_monitor", {}).get("chat_id", "")
+
+    @property
+    def cpu_node_names(self) -> list:
+        """Get CPU node names from config."""
+        names = self._config.get("cpu_monitor", {}).get("names", [])
+        # Support both single string and list formats
+        if isinstance(names, str):
+            return [names]
+        return names
+
+    @property
+    def cpu_threshold(self) -> float:
+        """Get CPU usage warning threshold (0-1)."""
+        return self._config.get("cpu_monitor", {}).get("threshold", 0.8)
+
+    @property
+    def memory_threshold(self) -> float:
+        """Get memory usage warning threshold (0-1)."""
+        return self._config.get("cpu_monitor", {}).get("memory_threshold", 0.8)
