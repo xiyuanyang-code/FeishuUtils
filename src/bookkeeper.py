@@ -11,12 +11,10 @@ import lark_oapi as lark
 from lark_oapi.api.im.v1 import (
     ListMessageRequest,
     ListMessageResponse,
-    CreateMessageRequest,
-    CreateMessageResponse,
-    CreateMessageRequestBody,
 )
 
 from src.config import Config
+from src.utils import create_feishu_client, send_feishu_message
 
 logger = logging.getLogger(__name__)
 
@@ -79,12 +77,9 @@ class FeishuBookKeeper:
         Returns:
             Configured Lark client instance.
         """
-        return (
-            lark.Client.builder()
-            .app_id(self.config.bookkeeping_app_id)
-            .app_secret(self.config.bookkeeping_app_secret)
-            .log_level(lark.LogLevel.INFO)
-            .build()
+        return create_feishu_client(
+            self.config.bookkeeping_app_id,
+            self.config.bookkeeping_app_secret
         )
 
     def _format_timestamp(self, timestamp_ms: str) -> str:
@@ -447,39 +442,12 @@ class FeishuBookKeeper:
         Returns:
             True if message sent successfully, False otherwise.
         """
-        try:
-            # Create message content
-            content = json.dumps({"text": f"Successful！\n总消费金额：{total_amount} 元"})
-
-            # Build request
-            request: CreateMessageRequest = (
-                CreateMessageRequest.builder()
-                .receive_id_type("chat_id")
-                .request_body(
-                    CreateMessageRequestBody.builder()
-                    .receive_id(self.config.bookkeeping_chat_id)
-                    .msg_type("text")
-                    .content(content)
-                    .build()
-                )
-                .build()
-            )
-
-            # Send message
-            response: CreateMessageResponse = self.client.im.v1.message.create(request)
-
-            if not response.success():
-                logger.error(
-                    f"Failed to send message: code={response.code}, msg={response.msg}"
-                )
-                return False
-
-            logger.info("Success message sent to chat")
-            return True
-
-        except Exception as e:
-            logger.error(f"Error sending message: {e}")
-            return False
+        message = f"Successful！\n总消费金额：{total_amount} 元"
+        return send_feishu_message(
+            message_content=message,
+            client=self.client,
+            chat_id=self.config.bookkeeping_chat_id,
+        )
 
     def run(self, output_path: str = "bookkeeping_records.csv") -> None:
         """

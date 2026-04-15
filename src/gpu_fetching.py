@@ -11,14 +11,12 @@ from typing import List, Dict, Any, Optional
 
 import lark_oapi as lark
 from lark_oapi.api.im.v1 import (
-    CreateMessageRequest,
-    CreateMessageResponse,
-    CreateMessageRequestBody,
     ListMessageRequest,
     ListMessageResponse,
 )
 
 from src.config import Config
+from src.utils import create_feishu_client, send_feishu_message
 
 logger = logging.getLogger(__name__)
 
@@ -285,12 +283,9 @@ class FeishuGPUMonitor:
         Returns:
             Configured Lark client instance.
         """
-        return (
-            lark.Client.builder()
-            .app_id(self.config.gpu_monitor_app_id)
-            .app_secret(self.config.gpu_monitor_app_secret)
-            .log_level(lark.LogLevel.INFO)
-            .build()
+        return create_feishu_client(
+            self.config.gpu_monitor_app_id,
+            self.config.gpu_monitor_app_secret
         )
 
     def _format_gpu_message(self, gpu_data: Dict[str, List[GPUInfo]]) -> str:
@@ -341,36 +336,11 @@ class FeishuGPUMonitor:
         Returns:
             True if message sent successfully, False otherwise.
         """
-        try:
-            content = json.dumps({"text": message})
-
-            request: CreateMessageRequest = (
-                CreateMessageRequest.builder()
-                .receive_id_type("chat_id")
-                .request_body(
-                    CreateMessageRequestBody.builder()
-                    .receive_id(self.config.gpu_monitor_chat_id)
-                    .msg_type("text")
-                    .content(content)
-                    .build()
-                )
-                .build()
-            )
-
-            response: CreateMessageResponse = self.client.im.v1.message.create(request)
-
-            if not response.success():
-                logger.error(
-                    f"Failed to send message: code={response.code}, msg={response.msg}"
-                )
-                return False
-
-            logger.info("GPU monitoring message sent successfully")
-            return True
-
-        except Exception as e:
-            logger.error(f"Error sending message: {e}")
-            return False
+        return send_feishu_message(
+            message_content=message,
+            client=self.client,
+            chat_id=self.config.gpu_monitor_chat_id,
+        )
 
     def run(self) -> None:
         """Execute GPU monitoring and send report to Feishu (single-shot mode)."""
